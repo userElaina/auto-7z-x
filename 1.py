@@ -1,9 +1,12 @@
+_debug=False
+
 import os
 from os import system as sh
 from time import sleep as slp
 import base64
 
-enc=lambda x:'_'+base64.b64encode(str(x).encode()).decode().replace('/','')
+enc=lambda x:'===='+base64.b64encode(str(x).encode()).decode().replace('/','_')
+states=[b'',b'Data Error',b'CRC Failed',b'Unknown Error']
 
 def mian(pth:str,pwds:list,pth_log:str=None):
 	pth=os.path.abspath(pth)
@@ -34,21 +37,48 @@ def mian(pth:str,pwds:list,pth_log:str=None):
 		flg=False
 		for j in pwds:
 			od='7z x "'+pth_file+'" -p'+j[0]+' -y -o"'+pth_dir+'" 1>register_1.log 2>register_2.log'
-			if sh(od):
+			if _debug:
+				od='7z x "'+pth_file+'" -p'+j[0]+' -y -o"'+pth_dir+'"'
+				print(od)
+				input()
+
+			state=sh(od)
+			if state:
+				err=open('register_2.log','r').read()
+				if 'ERROR: Wrong password :' in err:
+					state=9
+				elif 'ERROR: Data Error in encrypted file. Wrong password? :' in err:
+					state=1
+				elif 'ERROR: CRC Failed in encrypted file. Wrong password? :' in err:
+					state=2
+				else:
+					state=3
+
+			if _debug:
+				print('state',state)
+				
+			if state>7:
 				print('Try to decompress "'+i+'" with password "'+j[0]+'", but WRONG.')
 				name_wa=os.path.splitext(i)[0]+'_'+j[1]
 				pth_wa=os.path.join(pth_recycle,name_wa)
 				od='move "'+pth_dir+'" "'+pth_wa+'" 1>register_1.log 2>register_2.log'
+				if _debug:
+					od='move "'+pth_dir+'" "'+pth_wa+'"'
+					print(od)
+					input()
 				sh(od)
 			else:
 				flg=True
 				print('Successfully decompressed "'+i+'" with password "'+j[0]+'"!')
-				open(pth_log,'ab').write(b_pth_file+b','+j[0].encode(errors='backslashreplace')+b'\n')
+				if state:
+					print('But it has '+states[state].decode()+'...')
+				open(pth_log,'ab').write(b_pth_file+b','+j[0].encode(errors='backslashreplace')+b','+states[state]+b'\n')
 				open(pth_log+'.'+j[1],'ab').write(b_pth_file+b'\n')
 				break
 		if not flg:
-			open(pth_log,'ab').write(b_pth_file+b',Wrong Password (salt:userElaina)\n')
-			open(pth_log+'.err','ab').write(b_pth_file+b'\n')
+			open(pth_log,'ab').write(b_pth_file+b',,Wrong Password\n')
+			open(pth_log+'.wp','ab').write(b_pth_file+b'\n')
 			print('Do you know the password of "'+i+'"?')
-
+		print()
+		
 mian(r'G:\qwq',['password1','password2',''])
