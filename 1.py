@@ -48,6 +48,7 @@ def mian(pth:str,pwds:list,pth_log:str=None):
 				break
 		if not flg:
 			open(pth_log,'ab').write(b_pth_file+b',Wrong Password (salt:userElaina)\n')
+			open(pth_log+'.err','ab').write(b_pth_file+b'\n')
 			print('Do you know the password of "'+i+'"?')
 
 mian(r'G:\qwq',['password1','password2',''])
