@@ -1,3 +1,4 @@
+_debug=True
 _debug=False
 
 import os
@@ -38,7 +39,7 @@ def mian(pth:str,pwds:list,pth_log:str=None):
 		for j in pwds:
 			od='7z x "'+pth_file+'" -p'+j[0]+' -y -o"'+pth_dir+'" 1>register_1.log 2>register_2.log'
 			if _debug:
-				od='7z x "'+pth_file+'" -p'+j[0]+' -y -o"'+pth_dir+'"'
+				# od='7z x "'+pth_file+'" -p'+j[0]+' -y -o"'+pth_dir+'"'
 				print(od)
 				input()
 
@@ -47,6 +48,12 @@ def mian(pth:str,pwds:list,pth_log:str=None):
 				err=open('register_2.log','r').read()
 				if 'ERROR: Wrong password :' in err:
 					state=9
+				elif 'Can not open encrypted archive.' in err:
+					flg=True
+					print('File "'+i+'" is incomplete...')
+					open(pth_log,'ab').write(b_pth_file+b',,Incomplete File\n')
+					open(pth_log+'.if','ab').write(b_pth_file+b'\n')
+					break
 				elif 'ERROR: Data Error in encrypted file. Wrong password? :' in err:
 					state=1
 				elif 'ERROR: CRC Failed in encrypted file. Wrong password? :' in err:
