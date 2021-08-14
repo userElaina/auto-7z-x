@@ -27,6 +27,15 @@ def mian(pth:str,pwds:list,pth_log:str=None):
 		k=i[2]
 		break
 	for i in k:
+		if re.findall(r'^[\s\S]+\.part[0-9]+\.rar$',i):
+			if '.part1.rar' not in i:
+				continue
+		if re.findall(r'^[\s\S]+\.7z\.[0-9]{3}$',i):
+			if '.7z.001' not in i:
+				continue
+		if re.findall(r'^[\s\S]+\.zip\.[0-9]{3}$',i):
+			if '.zip.001' not in i:
+				continue
 		pth_file=os.path.join(pth,i)
 		name_dir=os.path.splitext(i)[0]+'_decompressed'
 		pth_dir=os.path.join(pth,name_dir)
