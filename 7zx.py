@@ -45,6 +45,7 @@ def getname(name:str)->str:
 	return DONE
 
 def mian(pth:str,pwds:list):
+	global sh_log
 	pth=os.path.abspath(pth)
 	pth_recycle=os.path.join(pth,'0_decompress_recycle')
 	len_pth=len(pth)+1
@@ -53,7 +54,7 @@ def mian(pth:str,pwds:list):
 		sh('mkdir "'+pth_recycle+'"')
 
 	_log=os.path.join(pth_recycle,'0_decompress_logs')
-	log_sh=_log+'.sh'
+	sh_log=_log+'.sh'
 	log_csv=_log+'.csv'
 	log_if=_log+'.if'
 	log_wp=_log+'.wp'
