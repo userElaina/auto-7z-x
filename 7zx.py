@@ -35,6 +35,7 @@ def pwd(l:list,pth:str=None)->list:
 	return sorted(set(ans))
 
 states=[b'',b'Data Error',b'CRC Failed',b'Unknown Error']
+fake=['txt','jpg','png','bmp','ra','ar','gif','ppt','doc']
 DONE='_0_decompressed'
 
 re_split=lambda s:r'[^\.]*'.join(['',]+list(s)+['$',])
@@ -42,6 +43,9 @@ def getname(name:str)->str:
 	for s in ['rar','zip','7z']:
 		if re.findall(re_split(s),name):
 			return re.sub(re_split(s),s,name)
+	l=name.rsplit('.',1)
+	if l[-1] in fake:
+		return l[0]+'.rar'
 	return DONE
 
 def mian(pth:str,pwds:list):
