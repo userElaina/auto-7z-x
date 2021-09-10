@@ -70,20 +70,27 @@ def mian(pth:str,pwds:list):
 		pwds=[pwds,]
 	pwds=[(str(i),'_='+base64.b64encode(str(i).encode('utf8','backslashreplace')).decode().replace('/','_')) for i in pwds]
 
+
 	for l3 in os.walk(pth):
 		if '0_' in l3[0] and _normal_file:
 			continue
 
-		print('RENAME "'+l3[0]+'":')
+		flg=False
 		for i in l3[2]:
 			j=getname(i)
 			if j in [i,DONE]:
 				continue
 			od='move "'+os.path.join(l3[0],i)+'" "'+os.path.join(l3[0],j)+'"'
 			sh(od)
+			flg=True
 
+		if flg:
+			print('Renamed "'+l3[0]+'"')
+
+
+	for l3 in os.walk(pth):
 		if '0_' in l3[0]:
-			print('END "'+l3[0]+'" before decompress.\n')
+			# print('END "'+l3[0]+'" before decompress.\n')
 			continue
 
 		print('DECOMPRESS "'+l3[0]+'":')
@@ -150,4 +157,4 @@ def mian(pth:str,pwds:list):
 
 		print('END "'+l3[0]+'" after all.\n')
 
-mian(r'G:\vmback_baidu',pwd('美少女黑洞+'))
+mian(r'H:\vm\baidu',pwd('美少女黑洞+'))
